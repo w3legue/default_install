@@ -101,6 +101,7 @@ def check_tmux():
     dst_file = f'{home}/.tmux.conf'
     check_file_exists(dst_file)
     os.symlink(path_to_rc, dst_file)
+    check_tpm()
 
 # Install TPM if it isn't installed
 def check_tpm():
