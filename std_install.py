@@ -22,6 +22,11 @@ def setup_os():
         path = f'{home}/.code'
         if not os.path.exists(path):
             os.mkdir(path)
+    if os_type == 'Darwin':
+        home = os.path.expanduser("~")
+        path = f'{home}/.code'
+        if not os.path.exists(path):
+            os.mkdir(path)        
 
 # parse out the arguments
 def setup_args():
