@@ -176,6 +176,7 @@ def main():
             check_tmux()
         if args.zsh:
             check_zsh()
+    print("Run 'tmux run-shell ~/.tmux/plugins/tpm/bindings/install_plugins' to install plugins")
 #
 
 # start of execution
