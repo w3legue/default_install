@@ -34,7 +34,11 @@ def setup_args():
     parser.add_argument('-v', '--vim', help="Configure VIM", action='store_true', default=False)
     parser.add_argument('-t', '--tmux', help="Configure TMUX", action='store_true', default=False)
     parser.add_argument('-z', '--zsh', help="Configure ZSH", action='store_true', default=False)
-
+    parser.add_argument('-b', '--brew', help="Install Homebrew", action='store_true', default=False)
+    parser.add_argument('-d', '--direnv', help="Install Direnv", action='store_true', default=False)
+    parser.add_argument('-r', '--tree', help="Install Tree", action='store_true', default=False)
+    parser.add_argument('-k', '--kubectl', help="Install Kubectl", action='store_true', default=False)
+    parser.add_argument('-l', '--talosctl', help="Install Talosctl", action='store_true', default=False)
     args = parser.parse_args()
     return args
 
@@ -125,16 +129,20 @@ def check_zsh():
 
     check_package('zsh')
     oh_my()
-    path_to_rc = f'{config_path}/{os_type}/zshrc'
+    path_to_rc = f'{config_path}/zsh/zshrc'
     dst_file = f'{home}/.zshrc'
     check_file_exists(dst_file)
     os.symlink(path_to_rc, dst_file)
+
+    path_to_alias = f'{config_path}/zsh/zshrc'
+    dst_alias = f'{home}/.zshrc'
+    check_file_exists(dst_alias)
+    os.symlink(path_to_alias, dst_alias)
 
     # change the default shell to zsh
     command = 'which zsh'
     which_zsh = subprocess.check_output(command, shell=True)
     subprocess.call(['sudo','chsh', '-s', '/usr/bin/zsh'])
-
 
 def oh_my():
     global oh_my_path
@@ -147,6 +155,47 @@ def oh_my():
         subprocess.call(['wget', '-O', 'install.sh', 'https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh'])
         subprocess.call(['sh', 'install.sh'])
         return
+
+def install_brew():
+    if os_type == 'Darwin':
+        command = '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+        subprocess.call(command, shell=True)
+    elif os_type == 'Linux':
+        command = '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+        subprocess.call(command, shell=True)
+
+def install_direnv():
+    if os_type == 'Darwin':
+        command = 'brew install direnv'
+        subprocess.call(command, shell=True)
+    elif os_type == 'Linux':
+        command = 'sudo apt-get install direnv -y'
+        subprocess.call(command, shell=True)
+
+def install_tree():
+    if os_type == 'Darwin':
+        command = 'brew install tree'
+        subprocess.call(command, shell=True)
+    elif os_type == 'Linux':
+        command = 'sudo apt-get install tree -y'
+        subprocess.call(command, shell=True)
+
+def install_kubectl():
+    if os_type == 'Darwin':
+        command = 'brew install kubectl'
+        subprocess.call(command, shell=True)
+    elif os_type == 'Linux':
+        command = 'sudo snap install kubectl --classic'
+        subprocess.call(command, shell=True)
+
+def install_talosctl():
+    if os_type == 'Darwin':
+        command = 'brew install talosctl'
+        subprocess.call(command, shell=True)
+    elif os_type == 'Linux':
+        command = 'sudo snap install talosctl --classic'
+        subprocess.call(command, shell=True)
+
 
 # What platform are we running on
 def get_os():
@@ -169,6 +218,11 @@ def main():
         check_vim()
         check_tmux()
         check_zsh()
+        install_brew()
+        install_direnv()
+        install_tree()
+        install_kubectl()
+        install_talosctl()
     else:
         if args.vim:
             check_vim()
@@ -176,6 +230,16 @@ def main():
             check_tmux()
         if args.zsh:
             check_zsh()
+        if args.brew:
+            install_brew()
+        if args.direnv:
+            install_direnv()
+        if args.tree:
+            install_tree()
+        if args.kubectl:
+            install_kubectl()
+        if args.talosctl:
+            install_talosctl()
     print("Run 'tmux run-shell ~/.tmux/plugins/tpm/bindings/install_plugins' to install plugins")
 #
 
